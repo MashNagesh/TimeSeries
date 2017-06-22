@@ -1,0 +1,318 @@
+---
+title: "TIME-SERIES ANALYSIS- EXPLORATORY STUDY"
+author: "MAHALAKSHMI"
+output: 
+  html_document: 
+    keep_md: yes
+---
+<https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html>
+
+```{r global_options, include=FALSE,cache=FALSE}
+knitr::opts_chunk$set(echo = FALSE,echo=FALSE, message=FALSE, warning=FALSE,error=TRUE)
+```
+
+Reading the data and converting into a TS object
+
+```{r kings}
+kings <- scan("http://robjhyndman.com/tsdldata/misc/kings.dat",skip = 3)
+kingsTS <- ts(kings)
+births <- scan("http://robjhyndman.com/tsdldata/data/nybirths.dat")
+birthsTS <- ts(births, frequency=12, start=c(1946,1))
+souvenir <- scan("http://robjhyndman.com/tsdldata/data/fancy.dat")
+souvenirTS <- ts(souvenir,frequency = 12,start = c(1987,1))
+```
+
+Plotting the read data
+
+KingsTS can best be explianed by an additive model since the seasonal variations are random
+
+```{r INITIAL PLOTS-1}
+plot(kingsTS)
+
+```
+
+Birth plot can be explained best by an additive model since the seasonal variation is constant
+
+```{r INITIAL PLOT-2}
+plot(birthsTS)
+```
+
+The Plot of Souvenior has seasonal fluctuations and hence can be best explained by a multiplicative model (the amplitude of seasonal variance is not constant)
+
+```{r INITIAL PLOT-3}
+plot.ts(souvenirTS)
+
+```
+
+To convert a multiplicative model into a additive model take logarithms and the seasonality amplitude looks constant
+
+```{r LOG Souvenir}
+plot.ts(log(souvenirTS))
+
+```
+
+
+
+For a non seasonal data the trend can be explained by a simple moving average
+
+```{r SMA}
+library("TTR")
+
+kingsTS3 <- SMA(kingsTS , n = 3)
+plot(kingsTS3)
+
+#smoothing it further
+kingsTS9 <- SMA(kingsTS , n = 9)
+plot(kingsTS9)
+
+```
+
+
+Decomposing : Means getting the trend/Seaonality and error
+
+```{r DECOMPOSE ADDITIVE}
+birthTSComponents <- decompose(birthsTS)
+plot(birthTSComponents)
+
+```
+
+Decomposing a Multiplicative series- by subtracting the seasonality.Decompose is used to understand the trend without the effect of seasonality
+
+```{r DECOMPOSE MULTIPLICATIVE}
+souvenirComponents <- decompose(souvenirTS)
+Souvenirnonseasonal <- souvenirTS - souvenirComponents$seasonal
+plot(souvenirTS)
+plot(Souvenirnonseasonal)
+```
+
+Simple Exponential smoothing : no trend and no seasonality
+
+```{r Simple Expo smoothing}
+rain <- scan("http://robjhyndman.com/tsdldata/hurst/precip1.dat",skip=1)
+rainTS <- ts(rain,start=c(1813))
+plot (rainTS)
+```
+
+### SIMPLE EXPONENTIAL SMOOTHING
+Forecasting the above using HoltWinters.Simple exponential smoothing can be used for the above
+
+```{r HW-1}
+rainforecast <- HoltWinters(rainTS,beta = FALSE,gamma = FALSE, l.start = 23.56)
+rainforecast
+#Getting the forecast predicted
+rainforecast$fitted
+```
+
+Plotting the forecast against the actual data
+
+```{r PLOTTING FORECAST}
+plot(rainforecast)
+print (rainforecast$SSE)
+
+```
+
+Making forecast for the next 8 periods.
+
+```{r FORECAST}
+library(forecast)
+rainforecast2 <- forecast(rainforecast,h=8)
+
+```
+
+Plotting the predicted forecast with a 80% and 95% confidence interval
+
+```{r PLOTTING FORECAST}
+plot(rainforecast2)
+
+```
+
+Getting the Correlogram of the residuals.If there is no corelation between the plotted acf's then the model cannot be improved.
+
+```{r CORRELOGRAM-1}
+acf(rainforecast2$residuals,lag.max = 20,na.action = na.omit)
+
+```
+
+As per the above the Linea t Lag -3 is just touching the significane boundary.This can be further checked using the Ljung-Box Test
+
+```{r LJ-Box test}
+Box.test(rainforecast2$residuals,lag = 20 , type = "Ljung-Box")
+
+```
+
+The p-value closer to 0 means there is a non-zero auto corealtion within the lags which is not the case in the above.Also the same can be checked by plotting the residuals to check for a zero mean and a constant variance
+
+```{r RESIDUALS PLOT}
+plot(rainforecast2$residuals)
+```
+
+## HOLTS EXPONENTIAL SMOOTHING
+
+If there is trend and no seasonality then the above is used.
+
+Trying out with the births data
+
+```{r HOLTS EXPO}
+skirts <- scan("http://robjhyndman.com/tsdldata/roberts/skirts.dat",skip=5)
+skirtsTS <- ts(skirts,start=c(1866))
+skirtsForecast <- HoltWinters(skirtsTS , gamma = FALSE)
+print (skirtsForecast)
+
+```
+
+Plotting the forecast
+
+```{r BIRTH FORECAST}
+plot(skirtsForecast)
+
+
+```
+
+Making Forecast
+
+```{r FORECASTING SKIRT}
+skirtsForecast2 <- forecast(skirtsForecast,h=19)
+plot(skirtsForecast2)
+```
+
+Testing the Possibility of betterment of the chosen method using ACF/Box-Lfung test and Plotting the residuals
+
+```{r VALIDATION -1 }
+acf(skirtsForecast2$residuals,lag = 20, na.action = na.omit)
+
+# the lag at 5 is just chance .However using box method the same can be verified
+Box.test(skirtsForecast2$residuals, lag = 20, type = "Ljung-Box")
+
+#Plot showing randomness with mean 0 and constant variance
+plot(skirtsForecast2$residuals)
+
+```
+
+## HOLT WINTERS EXPONENTIAL SMOOTHING
+
+The parameters alpha, beta and gamma all have values between 0 and 1, and values that are close to 0 mean that relatively little weight is placed on the most recent observations when making forecasts of future values.
+
+The Souvenir data looked like a multiplicative model beacuse of the seasonality rise.However the same can be converted to an additive model by taking Logarithms.
+
+```{r LOG SOUVENIR}
+souvenirlog <- log(souvenirTS)
+souvenirforecast <- HoltWinters(souvenirlog)
+print (souvenirforecast)
+plot(souvenirforecast)
+```
+
+Forecasting for the next 48 months
+
+```{r FORECASTING SOUVENIR}
+souvenirforecast2  <- forecast(souvenirforecast, h=48)
+plot(souvenirforecast2)
+
+```
+
+Checking the residual plot and the box method and ACF
+
+```{r ACF,BOX and RESIDUAL PLOT}
+plot(acf (souvenirforecast2$residuals,lag = 20, na.action = na.omit))
+Box.test(souvenirforecast2$residuals,lag = 20, type = "Ljung-Box")
+# P-value around 0.6
+plot(souvenirforecast2$residuals)
+
+```
+
+Based on the above we can conclude that the model is adequate in predicting the forecast.
+
+In cases where the residual plot does not have a zero mean and a constant variance ARIMA models are helpful.
+
+Using the Skirt data
+
+Differentiating the same to arrive at a stationary TS
+
+```{r DIFF SKIRT}
+skirtdiff1 <- diff(skirtsTS)
+plot(skirtdiff1)
+
+```
+
+
+Differentiating once again since the above does not look stationary
+
+```{r DIFF -2 SKIRT}
+skirtdiff2 <- diff(skirtdiff1)
+plot(skirtdiff2)
+
+```
+
+The above looks stationary hence we can proceed with the ARIMA(p,d,q) model.The order of differencing d for this case is 2.
+
+```{r ACF and PACF}
+plot(acf(skirtdiff2,lag = 20, plot = FALSE))
+plot(pacf(skirtdiff2,lag = 20, plot = FALSE))
+
+```
+
+Both the ACF and PACF do not abruptly tail off and hence we can go for the ARIMA model(2,2,2).Also we can use the auto.ARIMA () to find the appropriate model
+
+Another example
+
+```{r KINGS ARIMA}
+auto.arima(skirtsTS)
+plot(kingsTS)
+#differentiating to make it stationary
+kingsdiff1 <- diff(kingsTS)
+plot(kingsdiff1)
+
+# d= 1
+#Checking with ACF and PACf for Kings
+plot (acf(kingsdiff1 , plot = FALSE,lag= 20))
+plot (pacf(kingsdiff1 , plot = FALSE,lag= 20))
+
+#ACF abrupt(q=1) and PACF gradual suggest MA model of order 1 
+#ARIMA(0,1,1)
+auto.arima(kingsTS)
+```
+
+Getting the ARIMA values and forecast
+
+```{r KINGs ARIMA}
+
+KingsARIMA <- arima(kingsTS, order = c(0,1,1))
+kingsArimaForecast <- forecast(KingsARIMA , h= 10)
+plot(kingsArimaForecast)
+
+#checking with ACF ,PACF  and plotting the residuals
+plot(acf(kingsArimaForecast$residuals, lag.max = 20 , plot = FALSE))
+plot(pacf(kingsArimaForecast$residuals, lag.max = 20, plot = FALSE))
+plot (kingsArimaForecast$residuals) # looks random
+Box.test(kingsArimaForecast$residuals,lag = 20, type = "Ljung-Box")
+plot(kingsArimaForecast)
+
+```
+
+Example of Volcanic dust Veil in Northern Hemisphere
+
+```{r VOLCANO}
+volcano <- scan("http://robjhyndman.com/tsdldata/annual/dvi.dat", skip=1)
+volcanoTS <- ts(volcano)
+plot(volcanoTS) # to check for diff
+# No diff required d = 0
+#Checking for P and q values
+plot (acf(volcanoTS , lag = 20 , plot =FALSE))
+plot (pacf(volcanoTS , lag = 20 , plot =FALSE))
+
+#options AR(2,0) - based on PACF  and MA(0,3) based on ACF. but since ACF is gradual it is more an AR type with p =2.Checking with auto.arima
+
+auto.arima(volcanoTS,ic= "bic")
+#Best option ARIMA(2,0,0)
+```
+Forecasting using the suggested models
+
+```{r FORECAST VOLCANO}
+volcanoARIMA <- arima(volcanoTS, order = c(2,0,0))
+volcanoforecast <- forecast(volcanoARIMA , h = 12)
+plot(volcanoforecast)
+plot(volcanoforecast$residuals)
+plot(acf(volcanoforecast$residuals , lag = 20, plot = FALSE))
+plot(pacf(volcanoforecast$residuals , lag = 20, plot = FALSE))
+Box.test(volcanoforecast$residuals , type = "Ljung-Box")
+```
+

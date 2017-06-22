@@ -68,7 +68,7 @@ plot(kingsTS9)
 ```
 
 
-Decomposing : Means getting the trend/Seaonality and error
+Decomposing : Means getting the trend,Seaonality and error
 
 ```{r DECOMPOSE ADDITIVE}
 birthTSComponents <- decompose(birthsTS)
@@ -105,7 +105,7 @@ rainforecast$fitted
 
 Plotting the forecast against the actual data
 
-```{r PLOTTING FORECAST}
+```{r PLOTTING FORECAST-1}
 plot(rainforecast)
 print (rainforecast$SSE)
 
@@ -121,7 +121,7 @@ rainforecast2 <- forecast(rainforecast,h=8)
 
 Plotting the predicted forecast with a 80% and 95% confidence interval
 
-```{r PLOTTING FORECAST}
+```{r PLOTTING FORECAST-2}
 plot(rainforecast2)
 
 ```
@@ -133,7 +133,7 @@ acf(rainforecast2$residuals,lag.max = 20,na.action = na.omit)
 
 ```
 
-As per the above the Linea t Lag -3 is just touching the significane boundary.This can be further checked using the Ljung-Box Test
+As per the above the plot Lag -3 is just touching the significane boundary.This can be further checked using the Ljung-Box Test
 
 ```{r LJ-Box test}
 Box.test(rainforecast2$residuals,lag = 20 , type = "Ljung-Box")
@@ -221,7 +221,10 @@ plot(souvenirforecast2$residuals)
 
 Based on the above we can conclude that the model is adequate in predicting the forecast.
 
-In cases where the residual plot does not have a zero mean and a constant variance ARIMA models are helpful.
+## ARIMA model
+
+In cases where the residual plot does not have a zero mean and a constant 
+variance ARIMA models are helpful.
 
 Using the Skirt data
 
@@ -316,3 +319,4 @@ plot(pacf(volcanoforecast$residuals , lag = 20, plot = FALSE))
 Box.test(volcanoforecast$residuals , type = "Ljung-Box")
 ```
 
+The p-Value of over 0.8 suggests that the model chosen is appropriate

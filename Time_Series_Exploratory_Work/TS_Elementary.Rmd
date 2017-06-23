@@ -26,27 +26,27 @@ Plotting the read data
 
 KingsTS can best be explianed by an additive model since the seasonal variations are random
 
-```{r INITIAL PLOTS1}
+```{r INITIALPLOTS1}
 plot(kingsTS)
 
 ```
 
 Birth plot can be explained best by an additive model since the seasonal variation is constant
 
-```{r INITIAL PLOT2}
+```{r INITIALPLOTS2}
 plot(birthsTS)
 ```
 
 The Plot of Souvenior has seasonal fluctuations and hence can be best explained by a multiplicative model (the amplitude of seasonal variance is not constant)
 
-```{r INITIAL PLOT3}
+```{r INITIALPLOTS3}
 plot.ts(souvenirTS)
 
 ```
 
 To convert a multiplicative model into a additive model take logarithms and the seasonality amplitude looks constant
 
-```{r LOG Souvenir}
+```{r LOGSouvenir}
 plot.ts(log(souvenirTS))
 
 ```

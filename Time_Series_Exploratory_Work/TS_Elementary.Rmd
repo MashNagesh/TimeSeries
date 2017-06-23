@@ -26,20 +26,20 @@ Plotting the read data
 
 KingsTS can best be explianed by an additive model since the seasonal variations are random
 
-```{r INITIAL PLOTS-1}
+```{r INITIAL PLOTS1}
 plot(kingsTS)
 
 ```
 
 Birth plot can be explained best by an additive model since the seasonal variation is constant
 
-```{r INITIAL PLOT-2}
+```{r INITIAL PLOT2}
 plot(birthsTS)
 ```
 
 The Plot of Souvenior has seasonal fluctuations and hence can be best explained by a multiplicative model (the amplitude of seasonal variance is not constant)
 
-```{r INITIAL PLOT-3}
+```{r INITIAL PLOT3}
 plot.ts(souvenirTS)
 
 ```
@@ -70,7 +70,7 @@ plot(kingsTS9)
 
 Decomposing : Means getting the trend,Seaonality and error
 
-```{r DECOMPOSE ADDITIVE}
+```{r DECOMPOSEADDITIVE}
 birthTSComponents <- decompose(birthsTS)
 plot(birthTSComponents)
 
@@ -78,7 +78,7 @@ plot(birthTSComponents)
 
 Decomposing a Multiplicative series- by subtracting the seasonality.Decompose is used to understand the trend without the effect of seasonality
 
-```{r DECOMPOSE MULTIPLICATIVE}
+```{r DECOMPOSEMULTIPLICATIVE}
 souvenirComponents <- decompose(souvenirTS)
 Souvenirnonseasonal <- souvenirTS - souvenirComponents$seasonal
 plot(souvenirTS)
@@ -87,7 +87,7 @@ plot(Souvenirnonseasonal)
 
 Simple Exponential smoothing : no trend and no seasonality
 
-```{r Simple Expo smoothing}
+```{r SimpleExposmoothing}
 rain <- scan("http://robjhyndman.com/tsdldata/hurst/precip1.dat",skip=1)
 rainTS <- ts(rain,start=c(1813))
 plot (rainTS)
@@ -96,7 +96,7 @@ plot (rainTS)
 ### SIMPLE EXPONENTIAL SMOOTHING
 Forecasting the above using HoltWinters.Simple exponential smoothing can be used for the above
 
-```{r HW-1}
+```{r HW_1}
 rainforecast <- HoltWinters(rainTS,beta = FALSE,gamma = FALSE, l.start = 23.56)
 rainforecast
 #Getting the forecast predicted
@@ -105,7 +105,7 @@ rainforecast$fitted
 
 Plotting the forecast against the actual data
 
-```{r PLOTTING FORECAST-1}
+```{r FORECAST_1}
 plot(rainforecast)
 print (rainforecast$SSE)
 
@@ -113,7 +113,7 @@ print (rainforecast$SSE)
 
 Making forecast for the next 8 periods.
 
-```{r FORECAST}
+```{r FORECAST_2}
 library(forecast)
 rainforecast2 <- forecast(rainforecast,h=8)
 
@@ -121,28 +121,28 @@ rainforecast2 <- forecast(rainforecast,h=8)
 
 Plotting the predicted forecast with a 80% and 95% confidence interval
 
-```{r PLOTTING FORECAST-2}
+```{r FORECAST_3}
 plot(rainforecast2)
 
 ```
 
 Getting the Correlogram of the residuals.If there is no corelation between the plotted acf's then the model cannot be improved.
 
-```{r CORRELOGRAM-1}
+```{r CORRELOGRAM1}
 acf(rainforecast2$residuals,lag.max = 20,na.action = na.omit)
 
 ```
 
 As per the above the plot Lag -3 is just touching the significane boundary.This can be further checked using the Ljung-Box Test
 
-```{r LJ-Box test}
+```{r LJBox_test}
 Box.test(rainforecast2$residuals,lag = 20 , type = "Ljung-Box")
 
 ```
 
 The p-value closer to 0 means there is a non-zero auto corealtion within the lags which is not the case in the above.Also the same can be checked by plotting the residuals to check for a zero mean and a constant variance
 
-```{r RESIDUALS PLOT}
+```{r RESIDUALSPLOT1}
 plot(rainforecast2$residuals)
 ```
 
@@ -152,7 +152,7 @@ If there is trend and no seasonality then the above is used.
 
 Trying out with the births data
 
-```{r HOLTS EXPO}
+```{r HOLTSEXPO}
 skirts <- scan("http://robjhyndman.com/tsdldata/roberts/skirts.dat",skip=5)
 skirtsTS <- ts(skirts,start=c(1866))
 skirtsForecast <- HoltWinters(skirtsTS , gamma = FALSE)
@@ -162,7 +162,7 @@ print (skirtsForecast)
 
 Plotting the forecast
 
-```{r BIRTH FORECAST}
+```{r BIRTHFORECAST}
 plot(skirtsForecast)
 
 
@@ -170,14 +170,14 @@ plot(skirtsForecast)
 
 Making Forecast
 
-```{r FORECASTING SKIRT}
+```{r FORECASTINGSKIRT}
 skirtsForecast2 <- forecast(skirtsForecast,h=19)
 plot(skirtsForecast2)
 ```
 
 Testing the Possibility of betterment of the chosen method using ACF/Box-Lfung test and Plotting the residuals
 
-```{r VALIDATION -1 }
+```{r VALIDATION_1 }
 acf(skirtsForecast2$residuals,lag = 20, na.action = na.omit)
 
 # the lag at 5 is just chance .However using box method the same can be verified
@@ -194,7 +194,7 @@ The parameters alpha, beta and gamma all have values between 0 and 1, and values
 
 The Souvenir data looked like a multiplicative model beacuse of the seasonality rise.However the same can be converted to an additive model by taking Logarithms.
 
-```{r LOG SOUVENIR}
+```{r HW_EXPO_SMOOTHING}
 souvenirlog <- log(souvenirTS)
 souvenirforecast <- HoltWinters(souvenirlog)
 print (souvenirforecast)
@@ -203,7 +203,7 @@ plot(souvenirforecast)
 
 Forecasting for the next 48 months
 
-```{r FORECASTING SOUVENIR}
+```{r FORECASTINGSOUVENIR}
 souvenirforecast2  <- forecast(souvenirforecast, h=48)
 plot(souvenirforecast2)
 
@@ -211,7 +211,7 @@ plot(souvenirforecast2)
 
 Checking the residual plot and the box method and ACF
 
-```{r ACF,BOX and RESIDUAL PLOT}
+```{r VALIDATION_3}
 plot(acf (souvenirforecast2$residuals,lag = 20, na.action = na.omit))
 Box.test(souvenirforecast2$residuals,lag = 20, type = "Ljung-Box")
 # P-value around 0.6
@@ -230,7 +230,7 @@ Using the Skirt data
 
 Differentiating the same to arrive at a stationary TS
 
-```{r DIFF SKIRT}
+```{r DIFFSKIRT1}
 skirtdiff1 <- diff(skirtsTS)
 plot(skirtdiff1)
 
@@ -239,7 +239,7 @@ plot(skirtdiff1)
 
 Differentiating once again since the above does not look stationary
 
-```{r DIFF -2 SKIRT}
+```{r DIFSKIRT2}
 skirtdiff2 <- diff(skirtdiff1)
 plot(skirtdiff2)
 
@@ -247,7 +247,7 @@ plot(skirtdiff2)
 
 The above looks stationary hence we can proceed with the ARIMA(p,d,q) model.The order of differencing d for this case is 2.
 
-```{r ACF and PACF}
+```{r ACF_PACF}
 plot(acf(skirtdiff2,lag = 20, plot = FALSE))
 plot(pacf(skirtdiff2,lag = 20, plot = FALSE))
 
@@ -257,7 +257,7 @@ Both the ACF and PACF do not abruptly tail off and hence we can go for the ARIMA
 
 Another example
 
-```{r KINGS ARIMA}
+```{r KINGSARIMA}
 auto.arima(skirtsTS)
 plot(kingsTS)
 #differentiating to make it stationary
@@ -276,7 +276,7 @@ auto.arima(kingsTS)
 
 Getting the ARIMA values and forecast
 
-```{r KINGs ARIMA}
+```{r KINGSARIMACONTD}
 
 KingsARIMA <- arima(kingsTS, order = c(0,1,1))
 kingsArimaForecast <- forecast(KingsARIMA , h= 10)
@@ -309,7 +309,7 @@ auto.arima(volcanoTS,ic= "bic")
 ```
 Forecasting using the suggested models
 
-```{r FORECAST VOLCANO}
+```{r FORECASTVOLCANO}
 volcanoARIMA <- arima(volcanoTS, order = c(2,0,0))
 volcanoforecast <- forecast(volcanoARIMA , h = 12)
 plot(volcanoforecast)

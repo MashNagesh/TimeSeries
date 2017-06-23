@@ -12,15 +12,15 @@ Plotting the read data
 
 KingsTS can best be explianed by an additive model since the seasonal variations are random
 
-![](TS_Elementary_files/figure-html/INITIAL PLOTS-1-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/INITIAL PLOTS1-1.png)<!-- -->
 
 Birth plot can be explained best by an additive model since the seasonal variation is constant
 
-![](TS_Elementary_files/figure-html/INITIAL PLOT-2-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/INITIAL PLOT2-1.png)<!-- -->
 
 The Plot of Souvenior has seasonal fluctuations and hence can be best explained by a multiplicative model (the amplitude of seasonal variance is not constant)
 
-![](TS_Elementary_files/figure-html/INITIAL PLOT-3-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/INITIAL PLOT3-1.png)<!-- -->
 
 To convert a multiplicative model into a additive model take logarithms and the seasonality amplitude looks constant
 
@@ -35,15 +35,15 @@ For a non seasonal data the trend can be explained by a simple moving average
 
 Decomposing : Means getting the trend,Seaonality and error
 
-![](TS_Elementary_files/figure-html/DECOMPOSE ADDITIVE-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/DECOMPOSEADDITIVE-1.png)<!-- -->
 
 Decomposing a Multiplicative series- by subtracting the seasonality.Decompose is used to understand the trend without the effect of seasonality
 
-![](TS_Elementary_files/figure-html/DECOMPOSE MULTIPLICATIVE-1.png)<!-- -->![](TS_Elementary_files/figure-html/DECOMPOSE MULTIPLICATIVE-2.png)<!-- -->
+![](TS_Elementary_files/figure-html/DECOMPOSEMULTIPLICATIVE-1.png)<!-- -->![](TS_Elementary_files/figure-html/DECOMPOSEMULTIPLICATIVE-2.png)<!-- -->
 
 Simple Exponential smoothing : no trend and no seasonality
 
-![](TS_Elementary_files/figure-html/Simple Expo smoothing-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/SimpleExposmoothing-1.png)<!-- -->
 
 ### SIMPLE EXPONENTIAL SMOOTHING
 Forecasting the above using HoltWinters.Simple exponential smoothing can be used for the above
@@ -174,7 +174,7 @@ Forecasting the above using HoltWinters.Simple exponential smoothing can be used
 
 Plotting the forecast against the actual data
 
-![](TS_Elementary_files/figure-html/PLOTTING FORECAST-1-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/FORECAST_1-1.png)<!-- -->
 
 ```
 ## [1] 1828.855
@@ -186,11 +186,11 @@ Making forecast for the next 8 periods.
 
 Plotting the predicted forecast with a 80% and 95% confidence interval
 
-![](TS_Elementary_files/figure-html/PLOTTING FORECAST-2-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/FORECAST_3-1.png)<!-- -->
 
 Getting the Correlogram of the residuals.If there is no corelation between the plotted acf's then the model cannot be improved.
 
-![](TS_Elementary_files/figure-html/CORRELOGRAM-1-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/CORRELOGRAM1-1.png)<!-- -->
 
 As per the above the plot Lag -3 is just touching the significane boundary.This can be further checked using the Ljung-Box Test
 
@@ -205,7 +205,7 @@ As per the above the plot Lag -3 is just touching the significane boundary.This 
 
 The p-value closer to 0 means there is a non-zero auto corealtion within the lags which is not the case in the above.Also the same can be checked by plotting the residuals to check for a zero mean and a constant variance
 
-![](TS_Elementary_files/figure-html/RESIDUALS PLOT-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/RESIDUALSPLOT1-1.png)<!-- -->
 
 ## HOLTS EXPONENTIAL SMOOTHING
 
@@ -233,15 +233,15 @@ Trying out with the births data
 
 Plotting the forecast
 
-![](TS_Elementary_files/figure-html/BIRTH FORECAST-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/BIRTHFORECAST-1.png)<!-- -->
 
 Making Forecast
 
-![](TS_Elementary_files/figure-html/FORECASTING SKIRT-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/FORECASTINGSKIRT-1.png)<!-- -->
 
 Testing the Possibility of betterment of the chosen method using ACF/Box-Lfung test and Plotting the residuals
 
-![](TS_Elementary_files/figure-html/VALIDATION -1-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/VALIDATION_1-1.png)<!-- -->
 
 ```
 ## 
@@ -251,7 +251,7 @@ Testing the Possibility of betterment of the chosen method using ACF/Box-Lfung t
 ## X-squared = 19.731, df = 20, p-value = 0.4749
 ```
 
-![](TS_Elementary_files/figure-html/VALIDATION -1-2.png)<!-- -->
+![](TS_Elementary_files/figure-html/VALIDATION_1-2.png)<!-- -->
 
 ## HOLT WINTERS EXPONENTIAL SMOOTHING
 
@@ -289,15 +289,15 @@ The Souvenir data looked like a multiplicative model beacuse of the seasonality 
 ## s12  1.18088423
 ```
 
-![](TS_Elementary_files/figure-html/LOG SOUVENIR-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/HW_EXPO_SMOOTHING-1.png)<!-- -->
 
 Forecasting for the next 48 months
 
-![](TS_Elementary_files/figure-html/FORECASTING SOUVENIR-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/FORECASTINGSOUVENIR-1.png)<!-- -->
 
 Checking the residual plot and the box method and ACF
 
-![](TS_Elementary_files/figure-html/ACF,BOX and RESIDUAL PLOT-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/VALIDATION_3-1.png)<!-- -->
 
 ```
 ## 
@@ -307,7 +307,7 @@ Checking the residual plot and the box method and ACF
 ## X-squared = 17.53, df = 20, p-value = 0.6183
 ```
 
-![](TS_Elementary_files/figure-html/ACF,BOX and RESIDUAL PLOT-2.png)<!-- -->
+![](TS_Elementary_files/figure-html/VALIDATION_3-2.png)<!-- -->
 
 Based on the above we can conclude that the model is adequate in predicting the forecast.
 
@@ -320,16 +320,16 @@ Using the Skirt data
 
 Differentiating the same to arrive at a stationary TS
 
-![](TS_Elementary_files/figure-html/DIFF SKIRT-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/DIFFSKIRT1-1.png)<!-- -->
 
 
 Differentiating once again since the above does not look stationary
 
-![](TS_Elementary_files/figure-html/DIFF -2 SKIRT-1.png)<!-- -->
+![](TS_Elementary_files/figure-html/DIFSKIRT2-1.png)<!-- -->
 
 The above looks stationary hence we can proceed with the ARIMA(p,d,q) model.The order of differencing d for this case is 2.
 
-![](TS_Elementary_files/figure-html/ACF and PACF-1.png)<!-- -->![](TS_Elementary_files/figure-html/ACF and PACF-2.png)<!-- -->
+![](TS_Elementary_files/figure-html/ACF_PACF-1.png)<!-- -->![](TS_Elementary_files/figure-html/ACF_PACF-2.png)<!-- -->
 
 Both the ACF and PACF do not abruptly tail off and hence we can go for the ARIMA model(2,2,2).Also we can use the auto.ARIMA () to find the appropriate model
 
@@ -349,7 +349,7 @@ Another example
 ## AIC=391.33   AICc=391.62   BIC=394.9
 ```
 
-![](TS_Elementary_files/figure-html/KINGS ARIMA-1.png)<!-- -->![](TS_Elementary_files/figure-html/KINGS ARIMA-2.png)<!-- -->![](TS_Elementary_files/figure-html/KINGS ARIMA-3.png)<!-- -->![](TS_Elementary_files/figure-html/KINGS ARIMA-4.png)<!-- -->
+![](TS_Elementary_files/figure-html/KINGSARIMA-1.png)<!-- -->![](TS_Elementary_files/figure-html/KINGSARIMA-2.png)<!-- -->![](TS_Elementary_files/figure-html/KINGSARIMA-3.png)<!-- -->![](TS_Elementary_files/figure-html/KINGSARIMA-4.png)<!-- -->
 
 ```
 ## Series: kingsTS 
@@ -366,7 +366,7 @@ Another example
 
 Getting the ARIMA values and forecast
 
-![](TS_Elementary_files/figure-html/KINGs ARIMA-1.png)<!-- -->![](TS_Elementary_files/figure-html/KINGs ARIMA-2.png)<!-- -->![](TS_Elementary_files/figure-html/KINGs ARIMA-3.png)<!-- -->![](TS_Elementary_files/figure-html/KINGs ARIMA-4.png)<!-- -->
+![](TS_Elementary_files/figure-html/KINGSARIMACONTD-1.png)<!-- -->![](TS_Elementary_files/figure-html/KINGSARIMACONTD-2.png)<!-- -->![](TS_Elementary_files/figure-html/KINGSARIMACONTD-3.png)<!-- -->![](TS_Elementary_files/figure-html/KINGSARIMACONTD-4.png)<!-- -->
 
 ```
 ## 
@@ -376,7 +376,7 @@ Getting the ARIMA values and forecast
 ## X-squared = 13.584, df = 20, p-value = 0.8509
 ```
 
-![](TS_Elementary_files/figure-html/KINGs ARIMA-5.png)<!-- -->
+![](TS_Elementary_files/figure-html/KINGSARIMACONTD-5.png)<!-- -->
 
 Example of Volcanic dust Veil in Northern Hemisphere
 
@@ -396,7 +396,7 @@ Example of Volcanic dust Veil in Northern Hemisphere
 ```
 Forecasting using the suggested models
 
-![](TS_Elementary_files/figure-html/FORECAST VOLCANO-1.png)<!-- -->![](TS_Elementary_files/figure-html/FORECAST VOLCANO-2.png)<!-- -->![](TS_Elementary_files/figure-html/FORECAST VOLCANO-3.png)<!-- -->![](TS_Elementary_files/figure-html/FORECAST VOLCANO-4.png)<!-- -->
+![](TS_Elementary_files/figure-html/FORECASTVOLCANO-1.png)<!-- -->![](TS_Elementary_files/figure-html/FORECASTVOLCANO-2.png)<!-- -->![](TS_Elementary_files/figure-html/FORECASTVOLCANO-3.png)<!-- -->![](TS_Elementary_files/figure-html/FORECASTVOLCANO-4.png)<!-- -->
 
 ```
 ## 

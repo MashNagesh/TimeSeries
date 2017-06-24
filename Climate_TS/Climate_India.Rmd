@@ -1,0 +1,152 @@
+---
+title: "REDWINE ANALYSIS"
+author: "MAHALAKSHMI"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r global_options, include=FALSE,cache=FALSE}
+knitr::opts_chunk$set(echo = FALSE,echo=FALSE, message=FALSE, warning=FALSE,error=TRUE)
+```
+
+###Loading the data 
+
+The CSV file containing all the data points is loaded.
+The data contains date points/Average temperature and the country names.
+
+```{r LOADING}
+temperature <- read.csv("C:/Users/Mash/Desktop/Git/Climate_TS/GlobalLandTemperaturesByCountry.csv")
+
+
+
+```
+
+### FILTERING THE DATA
+Head function is used to understand the dataset.
+The data pertaining to India is filtered using the dplyr package
+
+```{r}
+#head(temperature)
+library(dplyr)
+temp_only_IN <- temperature %>% filter(Country == "India") %>% select(AverageTemperature)
+#print (temp_only_IN)
+```
+
+### CREATING A TS VARIABLE
+
+Creating a TS variable using the filtered Indian temperatures using the TS 
+command and setting the start and end accordingly.
+A Further subset of the data from 1950 is considered for the prediction purpose.
+
+```{r TS_INDIA}
+TempTS <- ts(temp_only_IN,start=c(1796, 1), end=c(2013,9), frequency=12)
+plot(TempTS)
+
+#Subsetting and taking the data from 1950 only
+TempTS2 <- window(TempTS, start=c(1950, 1), end=c(2014, 12))
+library("zoo")
+TempTS3 <-na.locf(TempTS2, option = "locf", na.remaining = "rev")
+
+plot(TempTS3)
+```
+
+From the above plot  it can be seen that there is a seasonality component (which is constant) but not sure if there is a trend.Hence decomposing the same to find out the trend part.
+
+```{r decompose}
+temp_India_Components <- decompose(TempTS3)
+plot(temp_India_Components)
+
+```
+
+The decompose  plot shows a clear trend(upward) and the seasonality remains constant.
+We can go ahead with the Holt-Winters Exponential model with alpha,Beta nad Gamma parameters
+
+```{r HWE}
+TempForecast <- HoltWinters(TempTS3)
+print (TempForecast$SSE)
+#Predicting values for the next 72 months
+library(forecast)
+TempPrediction <- forecast(TempForecast, h = 72)
+#print (TempPrediction$fitted)
+plot(TempPrediction)
+```
+
+Let us check the residuals to find if they are any significant corelation using the acfa nd PACF plots.
+
+```{r RESIDUALS}
+plot(TempPrediction$residuals)
+
+plot(acf(TempPrediction$residuals,plot= FALSE, na.action = na.omit))
+plot(pacf(TempPrediction$residuals,plot= FALSE, na.action = na.omit))
+```
+
+Rechecking the co-relation using box test
+
+```{r BOX_TEST}
+Box.test(TempPrediction$residuals,lag = 20,type = "Ljung-Box")
+```
+
+As per box test there seems to be a corelation in the residuals , the above Holt-winters may not be appropriate and hence we can go for ARIMA models
+
+```{r ARIMA}
+#Checking for stationary before performing ARIMA
+plot(TempTS3)
+auto.arima(TempTS3)
+```
+
+The auto.Arima command suggest a 3,0,3 model.
+The plot looks stationary hence we can gor for a ARIMA model with d=0
+Checking for p and q values
+
+```{r ACF_PACF}
+plot(acf(TempTS3,lag = 100,plot = FALSE, na.action = na.omit))
+plot(pacf(TempTS3,lag = 50,plot = FALSE, na.action = na.omit))
+```
+
+Applying ARIMA(2,0,0) and ARIMA(3,0,3) to get the best fit
+
+```{r}
+ARIMA1 <- arima(TempTS3 , order = c(2,0,0))
+ARIMA2 <- arima(TempTS3, order = c(3,0,3))
+
+ARIMA1pred <- forecast(ARIMA1, h = 48)
+ARIMA2pred <- forecast(ARIMA2, h = 48)
+```
+
+Analysing both ARIMA1((2,0,0) and ARIMA2((3,0,3) as below
+
+```{r ARIMA1_Validation}
+plot(ARIMA1pred)
+plot(ARIMA1pred$residuals)
+Box.test(ARIMA1pred$residuals , type = "Ljung-Box")
+
+#Plotting PACF and ACF
+
+plot(acf(ARIMA1pred$residuals,lag = 100, plot= FALSE))
+plot(pacf(ARIMA1pred$residuals,lag = 100, plot= FALSE))
+```
+
+Above does not seem to be the best choice as per the values in the Box - test and the plots
+
+Checking for ARIMA2(3,0,3) as suggested by the auto function
+
+```{r ARIMA2_VALIDATION}
+
+plot(ARIMA2pred)
+plot(ARIMA2pred$residuals)
+Box.test(ARIMA2pred$residuals , type = "Ljung-Box")
+
+#Plotting PACF and ACF
+
+plot(acf(ARIMA2pred$residuals,lag = 100, plot= FALSE))
+plot(pacf(ARIMA2pred$residuals,lag = 100, plot= FALSE))
+```
+
+The higher P-Value indiucates that actually there is no corelation between the residulas and hence the above model ARIMA(3,0,3) is the best choice and the prediction values are as below
+
+```{r PREDICTED VALUES}
+print (ARIMA2pred)
+
+```
+

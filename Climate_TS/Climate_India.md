@@ -1,9 +1,9 @@
-# REDWINE ANALYSIS
+# CLIMATE ANALYSIS
 MAHALAKSHMI  
 
 
 
-###Loading the data 
+### Loading the data 
 
 The CSV file containing all the data points is loaded.
 The data contains date points/Average temperature and the country names.

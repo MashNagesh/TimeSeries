@@ -1,5 +1,5 @@
 ---
-title: "REDWINE ANALYSIS"
+title: "CLIMATE ANALYSIS"
 author: "MAHALAKSHMI"
 output: 
   html_document: 
@@ -10,7 +10,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE,echo=FALSE, message=FALSE, warning=FALSE,error=TRUE)
 ```
 
-###Loading the data 
+### Loading the data 
 
 The CSV file containing all the data points is loaded.
 The data contains date points/Average temperature and the country names.
